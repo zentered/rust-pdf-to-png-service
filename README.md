@@ -1,5 +1,7 @@
 # PDF to PNG Service
 
+![midjourney feature image](.github/assets/midjourney_a_friendly_bot_with_blue_eyes_converting_pdf_doc_ccbb5c1d-6129-4dc3-a7b3-88e0f8fb89db.png)
+
 This is the result of a long, painful and embarrassing journey to resolve a very
 simple task: get pngs and webp files from a PDF. Here are a few alternatives we
 tried:
