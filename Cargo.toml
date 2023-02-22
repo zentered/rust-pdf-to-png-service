@@ -1,0 +1,24 @@
+[package]
+authors = ["Patrick Heneise <http://github.com/patrickheneise>"]
+name = "pdf-service"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { version = "0.6.4", features = ["headers", "macros"] }
+dotenv = "0.15.0"
+image = "0.24.5"
+libvips = "1.5.1"
+pdfium-render = "0.7.29"
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
+serde = { version = "1.0.152", features = ["derive"] }
+tokio = { version = "1.25.0", features = [ "rt-multi-thread", "macros" ] }
+tower-http = { version = "0.3.0", features = [ "trace" ] }
+opentelemetry = "0.18.0"
+tracing-opentelemetry = "0.18.0"
+futures = "0.3"
+google-cloud-storage = { git = "https://github.com/yoshidan/google-cloud-rust",  branch="main" }
+google-cloud-default = { git = "https://github.com/yoshidan/google-cloud-rust", branch="main", features=[ "storage", "rustls-tls"]}
