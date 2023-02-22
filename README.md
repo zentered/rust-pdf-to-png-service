@@ -7,7 +7,7 @@ simple task: get pngs and webp files from a PDF. Here are a few alternatives we
 tried:
 
 - [pdf-to-png-converter](https://www.npmjs.com/package/pdf-to-png-converter) -
-  great, simple solution, but very pdf render functions
+  great, simple solution, but limited pdf render functions
 - [gm](https://www.npmjs.com/package/gm) - tried many different variations but
   we couldn't get this to work
 - [sharp](https://sharp.pixelplumbing.com) - built on `libvips` it's the fastest
