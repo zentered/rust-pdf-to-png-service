@@ -54,7 +54,7 @@ pub async fn upload(filename: &str, file: Vec<u8>) -> Result<(), Error> {
                 ..Default::default()
             },
             file,
-            UploadType::Simple(media),
+            &UploadType::Simple(media),
             None,
         )
         .await;
