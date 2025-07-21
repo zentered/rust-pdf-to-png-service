@@ -9,16 +9,15 @@ edition = "2021"
 [dependencies]
 axum = { version = "0.6.4", features = ["headers", "macros"] }
 dotenv = "0.15.0"
-image = "0.24.5"
+image = "0.25.6"
 libvips = "1.5.1"
 pdfium-render = "0.7.29"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
 serde = { version = "1.0.152", features = ["derive"] }
-tokio = { version = "1.25.0", features = [ "rt-multi-thread", "macros" ] }
+tokio = { version = "1.25.0", features = [ "rt-multi-thread", "macros", "fs" ] }
 tower-http = { version = "0.3.0", features = [ "trace" ] }
 opentelemetry = "0.18.0"
 tracing-opentelemetry = "0.18.0"
 futures = "0.3"
-google-cloud-storage = "0.9.0"
-google-cloud-default = { version = "0.1.0",  features= [ "storage", "rustls-tls"]}
+uuid = { version = "1.0", features = ["v4"] }

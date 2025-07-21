@@ -1,9 +1,9 @@
 pub mod convert;
-pub mod storage;
+pub mod file_ops;
 pub mod transform;
 
 use crate::convert::convert;
-use crate::storage::{download, upload};
+use crate::file_ops::{read_pdf, create_temp_dir, write_images_atomic, cleanup_temp_dir};
 use crate::transform::{init, load_image, transform};
 
 use axum::{
@@ -16,11 +16,11 @@ use axum::{
 };
 
 use dotenv;
-use futures::future::try_join_all;
 use libvips::VipsApp;
 use opentelemetry::sdk::export::trace::stdout;
 use serde::Deserialize;
 use std::io::Cursor;
+use image::ImageFormat;
 use std::net::SocketAddr;
 use std::{env, sync::Arc};
 use tower_http::trace::TraceLayer;
@@ -90,20 +90,44 @@ async fn service(
     info!("Headers: {:?}", headers);
     info!("Payload: {:?}", payload.name);
     let filename = payload.name.clone();
-    let file = download(&filename).await.unwrap();
+    
+    // Read PDF file
+    let file = match read_pdf(&filename).await {
+        Ok(data) => data,
+        Err(err) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                format!("Failed to read PDF file: {err}"),
+            ).into_response();
+        }
+    };
+
+    // Create temporary directory
+    let temp_dir = match create_temp_dir() {
+        Ok(dir) => dir,
+        Err(err) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Failed to create temp directory: {err}"),
+            ).into_response();
+        }
+    };
 
     let files = process(state.vips, &filename, file);
 
-    let upload_futures = files.iter().map(|(name, content)| {
-        // magic with futures :D
-        upload(&name, content.clone())
-    });
+    // Write images atomically
+    let result = write_images_atomic(&temp_dir, files).await;
+    
+    // Clean up temp directory
+    if let Err(cleanup_err) = cleanup_temp_dir(&temp_dir).await {
+        debug!("Warning: Failed to cleanup temp directory: {}", cleanup_err);
+    }
 
-    match try_join_all(upload_futures).await {
+    match result {
         Ok(_) => (StatusCode::OK, "All good").into_response(),
         Err(err) => (
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Failed to upload file: {err}"),
+            format!("Failed to process file: {err}"),
         )
             .into_response(),
     }
@@ -115,7 +139,7 @@ fn process(vips_app: Arc<VipsApp>, filename: &str, pdf_buffer: Vec<u8>) -> Vec<(
     info!("Converted PDF");
     let mut bytes: Vec<u8> = Vec::new();
     original_png
-        .write_to(&mut Cursor::new(&mut bytes), image::ImageOutputFormat::Png)
+        .write_to(&mut Cursor::new(&mut bytes), ImageFormat::Png)
         .unwrap();
 
     let original_image = load_image(&bytes);

@@ -11,3 +11,4 @@ Cargo.lock
 
 .env
 keyfile.json
+.claude

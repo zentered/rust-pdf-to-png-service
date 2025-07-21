@@ -27,7 +27,6 @@ pub fn transform(image: &VipsImage, format: Format) -> Result<Vec<u8>> {
             let options = ops::PngsaveBufferOptions {
                 q: 90,
                 compression: 8,
-                strip: true,
                 bitdepth: 8,
                 ..ops::PngsaveBufferOptions::default()
             };
@@ -40,7 +39,6 @@ pub fn transform(image: &VipsImage, format: Format) -> Result<Vec<u8>> {
             let resized = ops::resize(image, scale).expect("Vips resize failed");
             let options = ops::PngsaveBufferOptions {
                 q: 75,
-                strip: true,
                 compression: 8,
                 interlace: true,
                 bitdepth: 8,
@@ -52,7 +50,6 @@ pub fn transform(image: &VipsImage, format: Format) -> Result<Vec<u8>> {
             let resized = ops::thumbnail_image(image, 1024).expect("Vips thumbnail failed");
             let options = ops::PngsaveBufferOptions {
                 q: 70,
-                strip: true,
                 interlace: true,
                 compression: 8,
                 bitdepth: 8,
@@ -65,7 +62,6 @@ pub fn transform(image: &VipsImage, format: Format) -> Result<Vec<u8>> {
             let options = ops::WebpsaveBufferOptions {
                 q: 100,
                 lossless: true,
-                strip: true,
                 ..ops::WebpsaveBufferOptions::default()
             };
             ops::webpsave_buffer_with_opts(&processed, &options)
@@ -77,7 +73,6 @@ pub fn transform(image: &VipsImage, format: Format) -> Result<Vec<u8>> {
             let processed = ops::resize(image, scale).expect("Vips resize failed");
             let options = ops::WebpsaveBufferOptions {
                 q: 75,
-                strip: true,
                 ..ops::WebpsaveBufferOptions::default()
             };
             ops::webpsave_buffer_with_opts(&processed, &options)
